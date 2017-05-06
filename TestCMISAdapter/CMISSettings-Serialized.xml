@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<CMISSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ServerURL>http://MyServer</ServerURL>
+  <Username>johannes</Username>
+  <Password>UpWsFfu4bfaz8heAnwz6JA==</Password>
+  <SelectedRepository />
+  <SecondaryTypesSupported>false</SecondaryTypesSupported>
+  <LoadRepositoriesPossible>false</LoadRepositoriesPossible>
+  <ConnectPossible>false</ConnectPossible>
+  <SerializedFolderPath>
+    <string>SerializedFolderPath</string>
+  </SerializedFolderPath>
+  <UseSubFolderField>false</UseSubFolderField>
+  <SubFolderField>FolderField</SubFolderField>
+  <UseSubFolderType>false</UseSubFolderType>
+  <SubFolderTypeFixed>true</SubFolderTypeFixed>
+  <SubFolderType>cmis:folder</SubFolderType>
+  <SubFolderTypeFromField>false</SubFolderTypeFromField>
+  <SubFolderTypeField>FolderTypeField</SubFolderTypeField>
+  <SelectedConflictHandling>None</SelectedConflictHandling>
+  <NumberOfDigits>4</NumberOfDigits>
+  <Major>true</Major>
+  <UseInputFileName>false</UseInputFileName>
+  <UseSpecification>true</UseSpecification>
+  <Specification>&lt;BATCHID&gt;_&lt;DOCUMENTNUMBER&gt;</Specification>
+  <SerializedTypePath>
+    <string>SerializedTypePath</string>
+  </SerializedTypePath>
+  <Properties>
+    <CMIS_Property>
+      <Id>1</Id>
+      <DisplayName>one</DisplayName>
+      <Type>String</Type>
+      <Selected>true</Selected>
+    </CMIS_Property>
+  </Properties>
+</CMISSettings>

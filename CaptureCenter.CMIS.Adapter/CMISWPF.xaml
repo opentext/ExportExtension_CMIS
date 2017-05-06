@@ -1,0 +1,696 @@
+﻿<siee:SIEEUserControl 
+    x:Class="CaptureCenter.CMIS.CMIS_WPFControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:CaptureCenter.CMIS"
+    xmlns:siee="clr-namespace:ExportExtensionCommon;assembly=ExportExtensionCommon.Base"
+    mc:Ignorable="d" 
+    d:DataContext="{d:DesignInstance local:CMISViewModel}"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    Background="Transparent"
+>
+    <siee:SIEEUserControl.Resources>
+        <siee:BoolToRunningCursorConverter x:Key="BoolToRunningCursorConverter"/>
+        <siee:BoolArrayToVisibilityConverter x:Key="BoolArrayToVisibilityConverter"/>
+        <siee:BoolToHiddenOrVisibleConverter x:Key="BoolToHiddenOrVisibleConverter"/>
+        <siee:InverseBoolToHiddenOrVisibleConverter x:Key="InverseBoolToHiddenOrVisibleConverter"/>
+    </siee:SIEEUserControl.Resources>
+    
+    <TabControl 
+        SelectedIndex="{Binding SelectedTab}"
+        SelectionChanged="TabControl_SelectionChanged"
+        Cursor="{Binding IsRunning, Converter={StaticResource BoolToRunningCursorConverter}}"
+        x:Name="mainTabControl"
+        TabStripPlacement="Left"
+    >
+        <TabControl.Resources>
+            <Style TargetType="{x:Type TabItem}">
+                <Setter Property="Padding" Value="10,5,5,5"/>
+            </Style>
+        </TabControl.Resources>
+
+        <TabItem x:Name="connectionTab">
+            <TabItem.Header>
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Center"
+                           Source="Resources/warning.png" Height="16"
+                           ToolTip="{Binding CT.Warning}"
+                           Visibility="{Binding DataLoaded, Converter={StaticResource BoolToHiddenOrVisibleConverter}}"
+                        />
+                    <TextBlock Grid.Column="1" Text="Connection" VerticalAlignment="Center"/>
+                </Grid>
+            </TabItem.Header>
+
+            <Grid ShowGridLines="False"
+                MinWidth="400" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Server URL -->
+                <Label 
+                    Grid.Row="0" Grid.Column="0" Margin="5"
+                    Content="Server URL"
+                />
+                <TextBox 
+                    Grid.Row="0" Grid.Column="1" Margin="5" MinWidth="150" 
+                    VerticalContentAlignment="Center"
+                    Text="{Binding CT.ServerURL, UpdateSourceTrigger=PropertyChanged}"
+                />
+                
+                <!-- Binding -->
+                <Label 
+                    Grid.Row="1" Grid.Column="0" Margin="5"
+                    Content="Binding"
+                />
+                <StackPanel
+                    Grid.Row="1" Grid.Column="1"
+                    Orientation="Horizontal">
+
+                    <RadioButton 
+                        Margin="5" Content="Atom"
+                        IsChecked="{Binding CT.AtomBinding}" />
+                    <RadioButton 
+                        Margin="5" Content="Browser" 
+                        IsChecked="{Binding CT.BrowserBinding}" />
+                    <RadioButton 
+                        Margin="5" Content="WebServices" Visibility="Collapsed"
+                        IsChecked="{Binding CT.WebServiceBinding}" />
+                </StackPanel>
+
+                    <!-- User name and password -->
+                <Label 
+                    Grid.Row="2" Grid.Column="0" Margin="5"
+                    Content="User name"
+                />
+                <TextBox 
+                    Grid.Row="2" Grid.Column="1" MinWidth="150" Margin="5"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding CT.Username, UpdateSourceTrigger=PropertyChanged}"
+                />
+                <Label 
+                    Grid.Row="3" Grid.Column="0" Margin="5"
+                    Content="Password"
+                />
+                <PasswordBox  
+                    Grid.Row="3" Grid.Column="1" MinWidth="150" Margin="5"
+                    VerticalContentAlignment="Center"
+                    PasswordChanged="passwordBox_PasswordChanged"
+                    x:Name="passwordBox"/>
+
+                <!-- Connect button -->
+                <Button
+                    Style="{x:Null}"
+                    Grid.Row="4" Grid.Column="1" Margin="5" Padding="10,2,10,2"
+                    Click="Button_LoadRepositories_Click"
+                    Content="Load Repositories"
+                />
+
+                <!-- Repository selection -->
+                <Label 
+                    Grid.Row="5" Grid.Column="0" Margin="5"
+                    VerticalAlignment="Center"
+                    Content="Repository"
+                />
+                <Grid Grid.Row="5" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox 
+                        MinWidth="150" Margin="5"
+                        IsEnabled="{Binding RepositoriesLoaded}"
+                        ItemsSource="{Binding CT.Repositories}"
+                        DisplayMemberPath="Description"
+                        SelectedItem="{Binding CT.SelectedRepository}"
+                    />
+                    <Button
+                        Style="{x:Null}"
+                        Grid.Column="1" Margin="5" Padding="10,2,10,2"
+                        IsEnabled="{Binding RepositoriesLoaded}"
+                        Click="Button_Connect_Click"
+                        Content="Connect"
+                    />
+                </Grid>
+                
+                <!-- Check connection <-->
+                <Button
+                    Style="{x:Null}"
+                    Grid.Row="6" Grid.ColumnSpan="2" Margin="5,50,5,5" Padding="10,2,10,2"
+                    HorizontalAlignment="Right"
+                    Click="Button_CheckConnection_Click"
+                    Content="Check connection"
+                />
+            </Grid>
+        </TabItem>
+
+        <TabItem x:Name="folderTab" IsEnabled="{Binding DataLoaded}">
+            <TabItem.Header>
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Center"
+                           Source="Resources/warning.png" Height="16"
+                           ToolTip="{Binding FT.Warning}"
+                           Visibility="{Binding FT.WarningVisible, Converter={StaticResource InverseBoolToHiddenOrVisibleConverter}}"
+                        />
+                    <TextBlock Grid.Column="1" Text="Folder" VerticalAlignment="Center"/>
+                </Grid>
+            </TabItem.Header>
+
+            <Grid ShowGridLines="False"
+                MinWidth="400" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Path display -->
+                <DockPanel 
+                    Grid.Row="0" Grid.ColumnSpan="2">
+                    <Label 
+                        Margin="5" Content="Root folder:"
+                    />
+                    <TextBlock
+                        Margin="5" Padding="4" MinWidth="150" 
+                        VerticalAlignment="Center"
+                        Foreground="Green" Background="LightGray"
+                        Text="{Binding FT.SelectedFolderPath}"
+                    />
+                </DockPanel>
+                <!-- TreeView -->
+                <TreeView 
+                    x:Name="foldertree"
+                    Grid.Row="1" Grid.ColumnSpan="2" Margin="5"
+                    SelectedItemChanged="FolderTreeView_Selection_Changed"
+                    ItemsSource="{Binding FT.Folders}"
+                >
+                    <TreeView.ItemContainerStyle>
+                        <!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate 
+                            DataType="{x:Type siee:TVIViewModel}" 
+                            ItemsSource="{Binding Children}"
+                        >
+                            <StackPanel Orientation="Horizontal">
+                                <Image 
+                                    Name="img" Width="16" Height="16" Stretch="Fill"
+                                    VerticalAlignment="Center" Margin="0,0,5,0"
+                                    Source="{Binding Icon}"/>
+                                <TextBlock 
+                                    VerticalAlignment="Center"
+                                    Text="{Binding DisplayName}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+
+                <!-- SubFolder field -->
+                <CheckBox 
+                    Grid.Row="2" Grid.Column="0" Margin="5"
+                    VerticalContentAlignment="Center"
+                    x:Name="subfolderCheckbox"
+                    IsChecked="{Binding FT.UseSubFolderField}"
+                    Content="Subfolder from field"
+                />
+                <TextBox
+                    Grid.Row="2" Grid.Column="1" Margin="5"
+                    VerticalContentAlignment="Center" MinHeight="20"
+                    IsEnabled="{Binding ElementName=subfolderCheckbox, Path=IsChecked}">
+                    <TextBox.Text>
+                        <Binding Path="FT.SubFolderField" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <siee:NotEmptyValidation/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <!-- SubFolderType -->
+                <CheckBox 
+                    Grid.Row="3" Grid.ColumnSpan="2" Margin="5"
+                    VerticalAlignment="Center" VerticalContentAlignment="Center"
+                    x:Name="subfolderTypeCheckbox"
+                    IsChecked="{Binding FT.UseSubFolderType}"
+                    Content="Use specific subfolder type"
+                />
+
+                <GroupBox 
+                    Grid.Row="4" Grid.ColumnSpan="2" Margin="20,0,0,0"
+                    IsEnabled="{Binding ElementName=subfolderTypeCheckbox, Path=IsChecked}"
+                >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton 
+                            Grid.Row="0" Grid.Column="0" Margin="5"
+                            VerticalAlignment="Center" 
+                            x:Name="subfolderFixedType"
+                            IsChecked="{Binding FT.SubFolderTypeFixed}"
+                            Content="Fixed"
+                        />
+                        <TextBox
+                            Grid.Row="0" Grid.Column="1" Margin="5"
+                            VerticalContentAlignment="Center" MinHeight="20"
+                            IsEnabled="{Binding ElementName=subfolderFixedType, Path=IsChecked}">
+                            <TextBox.Text>
+                                <Binding Path="FT.SubFolderType" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <siee:NotEmptyValidation/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <RadioButton 
+                            Grid.Row="1" Grid.Column="0" Margin="5"
+                            VerticalAlignment="Center" 
+                            x:Name="subfolderTypeFromField"
+                            IsChecked="{Binding FT.SubFolderTypeFromField}"
+                            Content="From field"
+                        />
+                        <TextBox
+                            Grid.Row="1" Grid.Column="1" Margin="5"
+                            VerticalContentAlignment="Center" MinHeight="20"
+                            IsEnabled="{Binding ElementName=subfolderTypeFromField, Path=IsChecked}">
+                            <TextBox.Text>
+                                <Binding Path="FT.SubFolderTypeField" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <siee:NotEmptyValidation/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Collision handling -->
+                <Label
+                    Grid.Row="5" Grid.Column="0" Margin="5"
+                    Content="Collision handling"
+                />
+                <ComboBox
+                    Grid.Row="5" Grid.Column="1" Margin="5" MinWidth="50"
+                    VerticalContentAlignment="Center"
+                    ItemsSource="{Binding FT.ConflictHandlingMethods}"
+                    DisplayMemberPath="Name" 
+                    SelectedValuePath="Value" 
+                    SelectedValue="{Binding FT.SelectedConflictHandling}" 
+                />
+
+                <Label
+                    Grid.Row="6" Grid.Column="0" Margin="5"
+                    Visibility="{Binding FT.NumberOfDigitsVisible}"
+                    Content="Number of digits"
+                />
+                <TextBox
+                    Grid.Row="6" Grid.Column="1" Margin="5"
+                    VerticalContentAlignment="Center"
+                    Visibility="{Binding FT.NumberOfDigitsVisible}"
+                    Text="{Binding FT.NumberOfDigits}"
+                />
+                <StackPanel
+                    Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="5"
+                    Visibility="{Binding FT.VersioningVisible}" >
+
+                    <RadioButton
+                        GroupName="majorMinorSelection" Margin="5"
+                        IsChecked="{Binding FT.Major}" 
+                        Content="Major" 
+                    />
+                    <RadioButton 
+                        GroupName="majorMinorSelection" Margin="5"
+                        Content="Minor" 
+                    />
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+        
+        <TabItem x:Name="typesTab" IsEnabled="{Binding DataLoaded}" >
+            <TabItem.Header>
+                <Grid HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Center"
+                           Source="Resources/warning.png" Height="16"
+                           ToolTip="{Binding TT.Warning}"
+                           Visibility="{Binding TT.PropertiesLoaded, Converter={StaticResource BoolToHiddenOrVisibleConverter}}"
+                        />
+                    <TextBlock Grid.Column="1" Text="Type" VerticalAlignment="Center"/>
+                </Grid>
+            </TabItem.Header>
+            
+            <Grid ShowGridLines="False"
+                MinWidth="400" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Selected type -->
+                <DockPanel 
+                    Grid.Row="0" Grid.ColumnSpan="2">
+                    <Label 
+                    Margin="5" Content="Selected type:"
+                />
+                    <TextBlock
+                    Grid.Row="0" Grid.Column="1" Margin="5" Padding="4"
+                    VerticalAlignment="Center"
+                    Foreground="Green" Background="LightGray"
+                    Text="{Binding TT.SelectedTypePath}"
+                />
+                </DockPanel>
+                <!-- TreeView -->
+                <TreeView 
+                    x:Name="typetree"
+                    Grid.Row="1" Grid.ColumnSpan="2" Margin="5"
+                    SelectedItemChanged="TypeTreeView_Selection_Changed"
+                    ItemsSource="{Binding TT.Types}"
+                >
+                    <TreeView.ItemContainerStyle>
+                        <!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate 
+                            DataType="{x:Type siee:TVIViewModel}" 
+                            ItemsSource="{Binding Children}"
+                        >
+                            <StackPanel Orientation="Horizontal">
+                                <Image 
+                                    Name="img" Width="16" Height="16" Stretch="Fill"
+                                    VerticalAlignment="Center" Margin="0,0,5,0"
+                                    Source="{Binding Icon}"/>
+                                <TextBlock 
+                                    VerticalAlignment="Center"
+                                    Text="{Binding DisplayName}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+
+                <!-- Properties -->
+
+                <Button
+                    Style="{x:Null}"
+                    Grid.Row="2" Grid.Column="0"
+                    Margin="5" Padding="10,2,10,2"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    IsEnabled="{Binding TT.TypeNodeSelected}"
+                    Content="Load properties"
+                    Click="Button_LoadProperties_Click"
+                />
+
+                <ScrollViewer 
+                    Grid.Row="3" Grid.ColumnSpan="2" Margin="5" 
+                    MaxHeight="250"  VerticalScrollBarVisibility="Auto" >
+                    <DataGrid
+                        MaxHeight="150" CanUserAddRows="false"
+                        ItemsSource="{Binding TT.Properties}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="50" Header="Use">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox 
+                                            IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged}"
+                                            HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="*"
+                                Header="Id" Binding="{Binding Id, Mode=OneWay}"/>
+                            <DataGridTextColumn Width="*"
+                                Header="Name" Binding="{Binding DisplayName, Mode=OneWay}"/>
+                            <DataGridTextColumn Width="*"
+                                Header="Type" Binding="{Binding Type, Mode=OneWay}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <Button
+                        Style="{x:Null}"
+                        Margin="5" Padding="10,2,10,2"
+                        VerticalAlignment="Center"  
+                        Content=" Select all "
+                        Click="Button_SelectAll_Click"
+                    />
+                    <Button
+                        Style="{x:Null}"
+                        Margin="5" Padding="10,2,10,2"
+                        VerticalAlignment="Center"
+                        Content="Deselect all"
+                        Click="Button_DeselectAll_Click"
+                    />
+                </StackPanel>
+
+                <Grid
+                    Grid.Row="5" Grid.ColumnSpan="2" Margin="0,10,0,5"
+                >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label
+                        Grid.Row="0" Grid.Column="0" Margin="5" 
+                        Content="Culture:"
+                    />
+                    <ComboBox
+                        Grid.Row="0" Grid.Column="1" Margin="5" Padding="5"
+                        VerticalContentAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding TT.Cultures}"
+                        DisplayMemberPath="DisplayName"
+                        SelectedItem="{Binding TT.SelectedCulture}"
+                    />
+                </Grid>
+            </Grid>
+        </TabItem>
+
+        <TabItem x:Name="documentTab" IsEnabled="{Binding DataLoaded}">
+            <TabItem.Header>
+                <TextBlock Grid.Column="1" Text="Document" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            </TabItem.Header>
+            
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="10">
+                <RadioButton 
+                    Margin="5"
+                    GroupName="documentname" Content="Create document name from input document name" 
+                    IsChecked="{Binding DT.UseInputFileName}"/>
+                <RadioButton
+                    Margin="5"
+                    GroupName="documentname" Content="Create document name from format" 
+                    IsChecked="{Binding DT.UseSpecification}"/>
+                <GroupBox 
+                    BorderThickness="0"
+                    IsEnabled="{Binding DT.UseSpecification}">
+                    <Grid MinWidth="400" ShowGridLines="False">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox 
+                            Grid.Row="0" Grid.Column="0" Margin="5"
+                            VerticalContentAlignment="Center" Grid.ColumnSpan="2"
+                            Text="{Binding DT.Specification, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label 
+                            Grid.Row="2" Grid.Column="0" Margin="5" 
+                            Content="Example:"/>
+                        <TextBlock 
+                            Grid.Row="2" Grid.Column="1" Margin="5" Padding="4" Grid.ColumnSpan="2"
+                            VerticalAlignment="Center" Foreground="Green" Background="LightGray"
+                            Text="{Binding DT.Result}"/>
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="5" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <!-- <ColumnDefinition Width="*"/> -->
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Row="0" Grid.Column="0" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;BATCHID>" ToolTip="Id number of the OCC batch the document is in"
+                                Click="Button_AddTokenToFile" Name="BATCHID" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+                            <Button Grid.Row="0" Grid.Column="1" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;DOCUMENTNUMBER>" ToolTip="Sequence number of the current batch"
+                                Click="Button_AddTokenToFile" Name="DOCUMENTNUMBER" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+                            <Button Grid.Row="0" Grid.Column="2" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;HOST>" ToolTip="Name of the machine initiating the entity creation"
+                                Click="Button_AddTokenToFile" Name="HOST" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+                            <Button Grid.Row="1" Grid.Column="0" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;DATE>" ToolTip="Date of entity creation"
+                                Click="Button_AddTokenToFile" Name="DATE" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+                            <Button Grid.Row="1" Grid.Column="1" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;TIME>" ToolTip="Time of entity creation"
+                                Click="Button_AddTokenToFile" Name="TIME" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+
+                            <Button Grid.Row="1" Grid.Column="2" Margin="10, 5, 10, 5" Padding="5,1,5,1" Style="{x:Null}"
+                                Content="&lt;UNIQUEID>" ToolTip="Unique value (on the current host)"
+                                Click="Button_AddTokenToFile" Name="UNIQUEID" Tag="{Binding RelativeSource={RelativeSource Self}, Path=Name}"
+                                    />
+
+                            <GroupBox Grid.Row="2" Grid.ColumnSpan="4" Margin="5"
+                                Header="Add value of an entity property"
+                                >
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox Grid.Row="2" Grid.Column="2" Margin="5"
+                                             MinWidth="200"
+                                             ItemsSource="{Binding DT.FieldNames}"
+                                             SelectedItem="{Binding DT.SelectedFieldName}"
+                                    />
+                                    <Button Grid.Row="2" Grid.Column="0" Margin="5"  Padding="5,2,5,2" Style="{x:Null}"
+                                        Content="Add" ToolTip="Add value of an entity property"
+                                        Click="Button_AddTokenToFile" Name="AddFieldToken" Tag="Add"
+                                    />
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+
+         <!-- De-activated till we intend to handle secondary types -->
+        <TabItem Header="Secondary types" 
+            x:Name="secondaryTypesTab"
+            IsEnabled="{Binding DataLoaded}"
+            Visibility="Hidden"
+        >
+            <!--<TabItem.Visibility>
+                <MultiBinding Converter="{StaticResource BoolArrayToVisibilityConverter}">
+                    <Binding Path="CT.Loaded"/>
+                    <Binding Path="CT.SecondaryTypesSupported"/>
+                </MultiBinding>
+            </TabItem.Visibility>-->
+            <Grid ShowGridLines="False"
+                MinWidth="400" Margin="10,20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <ScrollViewer 
+                    Grid.Row="0" Grid.ColumnSpan="2" Margin="10,0,10,15" 
+                    MaxHeight="250"  VerticalScrollBarVisibility="Auto" >
+                    <DataGrid
+                        MaxHeight="200" CanUserAddRows="true"
+                        ItemsSource="{Binding ST.SecondaryTypes}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="50" Header="Use">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox 
+                                            IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged}"
+                                            HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="*"
+                                Header="Name" Binding="{Binding Name}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+                
+            </Grid>
+        </TabItem>
+
+    </TabControl>
+</siee:SIEEUserControl>
