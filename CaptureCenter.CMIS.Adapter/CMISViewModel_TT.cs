@@ -29,6 +29,15 @@ namespace CaptureCenter.CMIS
             if (!vm.DebugMode) initializeTypeTree();
             return true;
         }
+
+        public void Reset()
+        {
+            SelectedTypePath = null;
+            settings.SelectedType = null;
+            settings.SerializedTypePath = null;
+            RaisePropertyChanged(PropertiesLoadedd_name);
+            Properties.Clear();
+        }
         #endregion
 
         #region Properties
@@ -95,6 +104,10 @@ namespace CaptureCenter.CMIS
             RaisePropertyChanged(TypeNodeSelected_name);
         }
 
+        public bool CanSelect()
+        {
+            return Properties.Count > 0;
+        }
         public void SelectAllHandler()
         {
             foreach (CMISProperty p in Properties) { p.Selected = true; }

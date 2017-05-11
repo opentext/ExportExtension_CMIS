@@ -249,6 +249,7 @@ namespace CaptureCenter.CMIS
             client.ServerURL = ServerURL;
             client.Username = Username;
             client.Password = PasswordEncryption.Decrypt(Password);
+            client.TypeOfBinding = Binding;
         }
         public string GetLocation()
         {

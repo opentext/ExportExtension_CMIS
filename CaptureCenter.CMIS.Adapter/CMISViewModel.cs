@@ -20,6 +20,8 @@ namespace CaptureCenter.CMIS
         public CMISViewModel_TT TT { get; set; }
         public CMISViewModel_ST ST { get; set; }
 
+        private bool repositoriesLoaded;
+
         public CMISViewModel(SIEESettings settings, ICMISClient cmisClient) : base() 
         {
             CMISSettings = settings as CMISSettings;
@@ -37,7 +39,7 @@ namespace CaptureCenter.CMIS
             if (this.CMISSettings.LoadRepositoriesPossible)
             {
                 LoadRepositoriesButtonHandler();
-                if (this.CMISSettings.ConnectPossible) ConnectdButtonHandler();
+                if (this.CMISSettings.ConnectPossible) ConnectdButtonHandler(true);
             }
 
             CT.PropertyChanged += (s, e) => {
@@ -46,7 +48,7 @@ namespace CaptureCenter.CMIS
                     DataLoaded = false;
                     if (e.PropertyName != CT.SelectedRepository_name)
                     {
-                        RepositoriesLoaded = false;
+                        repositoriesLoaded = false;
                         CMISSettings.LoadRepositoriesPossible = false;
                     }
                     CMISSettings.ConnectPossible = false;
@@ -92,12 +94,6 @@ namespace CaptureCenter.CMIS
             get { return _dataLoaded || DebugMode; }
             set { SetField(ref _dataLoaded, value); }
         }
-        private bool _repositoriesLoaded;
-        public bool RepositoriesLoaded
-        {
-            get { return _repositoriesLoaded; }
-            set { SetField(ref _repositoriesLoaded, value); }
-        }
         #endregion
 
         #region Functions
@@ -117,28 +113,60 @@ namespace CaptureCenter.CMIS
         {
             if (callHandler(CT.LoadRepositories, "Couldn't connect (login)"))
             {
-                RepositoriesLoaded = true;
+                repositoriesLoaded = true;
                 CMISSettings.LoadRepositoriesPossible = true;
             }
         }
 
-        public void ConnectdButtonHandler()
+        public bool CanConnect()
         {
-            if (callHandler(CT.Connect, "Couldn't load data"))
+            return repositoriesLoaded;
+        }
+
+        private string connectedRepositoryId = null;
+        public void ConnectdButtonHandler(bool initializing = false)
+        {
+            bool connectingRequired = string.IsNullOrEmpty(connectedRepositoryId) || connectedRepositoryId != CT.SelectedRepository.Id;
+            connectedRepositoryId = null;
+
+            if (connectingRequired)
             {
-                CMISSettings.ConnectPossible = true;
-                TabNamesReset();
-                DataLoaded = true;
-                if (callHandler(callFTActivateTab, "Couldn't load folders"))
-                    SelectedTab = 1;
+                if (callHandler(CT.Connect, "Couldn't load data"))
+                {
+                    CMISSettings.ConnectPossible = true;
+                    TabNamesReset();
+                    DataLoaded = true;
+                    if (!initializing)
+                    {
+                        FT.Reset();
+                        TT.Reset();
+                    }
+                }
+            }
+            if (callHandler(callFTActivateTab, "Couldn't load folders"))
+            {
+                SelectedTab = 1;
+                connectedRepositoryId = CT.SelectedRepository.Id;
             }
         }
 
         private void callFTActivateTab() {  FT.ActivateTab(); }
 
+        public bool CanLoadProperties()
+        {
+            return TT.TypeNodeSelected;
+        }
         public void LoadPropertiesHandler()
         {
             callHandler(TT.LoadProperties, "Couldn't load Properties");
+        }
+
+        public void ShowVersion()
+        {
+            SIEEMessageBox.Show(
+                "Version 1.6",
+                "CMIS connector for OCC",
+                MessageBoxImage.Information);
         }
         #endregion
 

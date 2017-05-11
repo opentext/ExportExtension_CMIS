@@ -36,6 +36,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortCMIS", "PortCMIS\PortCM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCMISClient", "Test.CMISClient\TestCMISClient.csproj", "{7D399110-125C-4519-A56E-E73C7A78B5CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAppSIEE", "..\ExportExtensionCommon\TestAppSIEE\TestAppSIEE.csproj", "{D4718809-84C7-4B0B-99D7-D433C04724AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A3AB61BE-057D-4DD4-824C-AC174322C5D2} = {A3AB61BE-057D-4DD4-824C-AC174322C5D2}
+		{FA830BE0-7DBB-408F-8A67-0DF622212069} = {FA830BE0-7DBB-408F-8A67-0DF622212069}
+		{F60404EB-5FA0-41A2-934F-8DE316FCC2E3} = {F60404EB-5FA0-41A2-934F-8DE316FCC2E3}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +77,10 @@ Global
 		{7D399110-125C-4519-A56E-E73C7A78B5CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D399110-125C-4519-A56E-E73C7A78B5CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D399110-125C-4519-A56E-E73C7A78B5CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4718809-84C7-4B0B-99D7-D433C04724AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4718809-84C7-4B0B-99D7-D433C04724AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4718809-84C7-4B0B-99D7-D433C04724AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4718809-84C7-4B0B-99D7-D433C04724AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

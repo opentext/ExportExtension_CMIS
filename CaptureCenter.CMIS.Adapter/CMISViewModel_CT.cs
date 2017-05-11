@@ -182,7 +182,8 @@ namespace CaptureCenter.CMIS
             // if the "SelectedRepository" is not in the list of repositories then select the first one
             if (Repositories != null)
             {
-                List<CMISRepository> lrp = Repositories.Where(n => n.Id == SelectedRepository.Id).ToList();
+                string selectedRepositoryId = SelectedRepository == null? null : SelectedRepository.Id;
+                List<CMISRepository> lrp = Repositories.Where(n => n.Id == selectedRepositoryId).ToList();
                 SelectedRepository = (lrp.Count == 1)? lrp.First() : Repositories[0];
             }
          }

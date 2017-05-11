@@ -44,6 +44,13 @@ namespace CaptureCenter.CMIS
             if (!vm.DebugMode) initializeFolderTree();
             return true;
         }
+
+        public void Reset()
+        {
+            SerializedFolderPath = null;
+            SelectedFolderPath = string.Empty;
+            Folders = null;
+        }
         #endregion
 
         #region Properties: proxy for settings
@@ -187,6 +194,7 @@ namespace CaptureCenter.CMIS
         #region Functions
         private void initializeFolderTree()
         {
+            if (Folders != null) return;
             Folders = new SIEETreeView(vm);
             Folders.AddItem(new TVIViewModel(new CMISFolderNode(null, vm.CMISClient.GetRootFolder()), null, true));
             Folders.InitializeTree(SerializedFolderPath, typeof(CMISFolderNode));

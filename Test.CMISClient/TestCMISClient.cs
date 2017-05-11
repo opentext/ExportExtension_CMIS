@@ -19,6 +19,7 @@ namespace CaptureCenter.CMIS
         /// The CMIS client librabry is tested against various target systems. For each target system there
         /// is one CMISTestSystem instance defined that contains all relevant settings for the target.
 
+        //private string testonly = null;
         private string testonly = "InMemory";
 
         #region Constructor
@@ -50,7 +51,7 @@ namespace CaptureCenter.CMIS
         {
             public string TestSystemName { get; set; }  // used to identify the system
             public string Description { get; set; }     // used for error messages in Assert
-            public bool IsActive { get; set; }
+            public bool IsActive { get; set; } = false;
 
             // Connection parameter
             public string ServerURL { get; set; }
@@ -447,7 +448,8 @@ namespace CaptureCenter.CMIS
             if (!string.IsNullOrEmpty(testonly))
                 return testsystems.Where(n => n.TestSystemName == testonly).ToList();
 
-            return testsystems.Where(n => n.IsActive).ToList();
+            List<CMISTestSystem> result =testsystems.Where(n => n.IsActive).ToList();
+            return result;
         }
         #endregion
 

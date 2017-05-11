@@ -53,16 +53,24 @@ namespace PortCMIS_TestAndExplore
             Dictionary<string, string> parameters = new Dictionary<string, string>();
 
             parameters[SessionParameter.BindingType] = PortCMIS.BindingType.Browser;
-            //parameters[SessionParameter.AtomPubUrl] = "http://egovint01.eng-muc.opentext.net:8080/xecm-cmis/atom";
-            parameters[SessionParameter.BrowserUrl] = "http://egovint01.eng-muc.opentext.net:8080/xecm-cmis/browser";
-            parameters[SessionParameter.User] = "mspecht";
-            parameters[SessionParameter.Password] = "init123";
+            //parameters[SessionParameter.AtomPubUrl] = "http://egovint02.eng-muc.opentext.net:8080/xecm-cmis/atom";
+            parameters[SessionParameter.BrowserUrl] = "http://egovint02.eng-muc.opentext.net:8080/xecm-cmis/browser";
+            parameters[SessionParameter.User] = "otadmin@otds.admin";
+            parameters[SessionParameter.Password] = "opentext";
             //parameters[SessionParameter.User] = "haralds";
             //parameters[SessionParameter.Password] = "opentext";
 
             SessionFactory factory = SessionFactory.NewInstance();
-            ISession session = factory.GetRepositories(parameters).Where(n => n.Id == "141").First().CreateSession();
+            IList<IRepository> sessions = factory.GetRepositories(parameters);
+            ISession session = sessions.Where(n => n.Id == "198").First().CreateSession();
             return session;
+        }
+
+        [TestMethod]
+        [TestCategory("Test and explore")]
+        public void Login()
+        {
+            getContentServerSession();
         }
 
         [TestMethod] [Ignore]

@@ -27,7 +27,7 @@ namespace CaptureCenter.CMIS
             CMISViewModel vm = new CMISViewModel(new CMISSettings(), new CMISClientMock());
             Assert.IsFalse(vm.IsRunning);
             Assert.IsFalse(vm.DataLoaded);
-            Assert.IsFalse(vm.RepositoriesLoaded);
+            Assert.IsFalse(vm.CanConnect());
             Assert.AreEqual(0, vm.SelectedTab);
             Assert.AreEqual("http://<Server URL>", vm.CT.ServerURL);
             Assert.AreEqual(TypeOfBinding.Atom, vm.CT.TypeOfBinding);
@@ -57,33 +57,33 @@ namespace CaptureCenter.CMIS
 
             // Load repositories
             vm = getViewModel();
-            Assert.IsFalse(vm.RepositoriesLoaded);
+            Assert.IsFalse(vm.CanConnect());
             Assert.IsFalse(vm.DataLoaded);
             Assert.IsFalse(vm.CMISSettings.LoadRepositoriesPossible);
             Assert.IsFalse(vm.CMISSettings.ConnectPossible);
 
             vm = new CMISViewModel(vm.Settings, new CMISClientMock());
-            Assert.IsFalse(vm.RepositoriesLoaded); // no change
+            Assert.IsFalse(vm.CanConnect()); // no change
             Assert.IsFalse(vm.DataLoaded); // no change
             Assert.IsFalse(vm.CMISSettings.LoadRepositoriesPossible); // no change
             Assert.IsFalse(vm.CMISSettings.ConnectPossible); // no change
 
             vm.LoadRepositoriesButtonHandler();
             Assert.AreEqual(3, vm.CT.Repositories.Count);
-            Assert.IsTrue(vm.RepositoriesLoaded); // change
+            Assert.IsTrue(vm.CanConnect()); // change
             Assert.IsFalse(vm.DataLoaded); // no change
             Assert.IsTrue(vm.CMISSettings.LoadRepositoriesPossible); // change
             Assert.IsFalse(vm.CMISSettings.ConnectPossible); // no change
 
             vm = new CMISViewModel(vm.Settings, new CMISClientMock());
             Assert.AreEqual(3, vm.CT.Repositories.Count);
-            Assert.IsTrue(vm.RepositoriesLoaded); // change
+            Assert.IsTrue(vm.CanConnect()); // change
             Assert.IsFalse(vm.DataLoaded); // no change
             Assert.IsTrue(vm.CMISSettings.LoadRepositoriesPossible); // change
             Assert.IsFalse(vm.CMISSettings.ConnectPossible); // no change
 
             vm.CT.Username += "-1"; // invalidate connection settings
-            Assert.IsFalse(vm.RepositoriesLoaded); // change
+            Assert.IsFalse(vm.CanConnect()); // change
             Assert.IsFalse(vm.DataLoaded); // no change
             Assert.IsFalse(vm.CMISSettings.LoadRepositoriesPossible); // change
             Assert.IsFalse(vm.CMISSettings.ConnectPossible); // no change
@@ -93,13 +93,20 @@ namespace CaptureCenter.CMIS
             Assert.AreEqual(vm.CT.SelectedRepository, vm.CT.Repositories.First());
             vm.ConnectdButtonHandler();
             Assert.IsNull(SIEEMessageBox.LastMessage);
-            Assert.IsTrue(vm.RepositoriesLoaded); // no change
+            Assert.IsTrue(vm.CanConnect()); // no change
             Assert.IsTrue(vm.DataLoaded); // change
             Assert.IsTrue(vm.CMISSettings.LoadRepositoriesPossible); // no change
             Assert.IsTrue(vm.CMISSettings.ConnectPossible); // change
+            Assert.AreEqual(vm.CT.SelectedRepository.Id, ((CMISClientMock)vm.CMISClient).CurrentRepository);
 
+            // Connecting twice -> no change
+            ((CMISClientMock)vm.CMISClient).CurrentRepository = null;
+            vm.ConnectdButtonHandler();
+            Assert.AreEqual(null, ((CMISClientMock)vm.CMISClient).CurrentRepository);
+
+            // Change repository
             vm.CT.SelectedRepository = vm.CT.Repositories.Last(); // reselect
-            Assert.IsTrue(vm.RepositoriesLoaded); // no change
+            Assert.IsTrue(vm.CanConnect()); // no change
             Assert.IsFalse(vm.DataLoaded); // change
             Assert.IsTrue(vm.CMISSettings.LoadRepositoriesPossible); // no change
             Assert.IsFalse(vm.CMISSettings.ConnectPossible); // change
@@ -107,10 +114,11 @@ namespace CaptureCenter.CMIS
             vm.ConnectdButtonHandler();
             Assert.IsNull(SIEEMessageBox.LastMessage);
             vm = new CMISViewModel(vm.Settings, new CMISClientMock());
-            Assert.IsTrue(vm.RepositoriesLoaded); // no change
+            Assert.IsTrue(vm.CanConnect()); // no change
             Assert.IsTrue(vm.DataLoaded); // no change
             Assert.IsTrue(vm.CMISSettings.LoadRepositoriesPossible); // no change
             Assert.IsTrue(vm.CMISSettings.ConnectPossible); // no change
+            Assert.AreEqual(vm.CT.SelectedRepository.Id, ((CMISClientMock)vm.CMISClient).CurrentRepository);
 
             // Binding type
             vm.CT.BrowserBinding = true;
@@ -118,16 +126,24 @@ namespace CaptureCenter.CMIS
             Assert.IsFalse(vm.CT.AtomBinding);
             Assert.IsTrue(vm.CT.BrowserBinding);
             Assert.IsFalse(vm.CT.WebServiceBinding);
+            vm.LoadRepositoriesButtonHandler();
+            Assert.AreEqual(TypeOfBinding.Browser, vm.CMISClient.TypeOfBinding);
             vm.CT.WebServiceBinding = true;
             Assert.AreEqual(TypeOfBinding.WebService, vm.CMISSettings.Binding);
             Assert.IsFalse(vm.CT.AtomBinding);
             Assert.IsFalse(vm.CT.BrowserBinding);
             Assert.IsTrue(vm.CT.WebServiceBinding);
+            vm.LoadRepositoriesButtonHandler();
+            Assert.AreEqual(TypeOfBinding.WebService, vm.CMISClient.TypeOfBinding);
             vm.CT.AtomBinding = true;
             Assert.AreEqual(TypeOfBinding.Atom, vm.CMISSettings.Binding);
             Assert.IsTrue(vm.CT.AtomBinding);
             Assert.IsFalse(vm.CT.BrowserBinding);
             Assert.IsFalse(vm.CT.WebServiceBinding);
+            vm.LoadRepositoriesButtonHandler();
+            Assert.AreEqual(TypeOfBinding.Atom, vm.CMISClient.TypeOfBinding);
+            Assert.AreEqual(vm.CT.Username, vm.CMISClient.Username);
+            Assert.AreEqual(vm.CT.Password, vm.CMISClient.Password);
         }
 
         private CMISViewModel getViewModel()
@@ -689,9 +705,12 @@ namespace CaptureCenter.CMIS
                 { new CMISRepository() { Id =  "Repository 3", Description = "Repository 3\nName 1\nDescription 3" } },
             };
         }
+
+        public string CurrentRepository { get; set; } = null;
         public void SelectRepository(string repositoryId)
         {
             Assert.IsTrue(LoadRepositories().Where(n => n.Id == repositoryId).Count() > 0);
+            CurrentRepository = repositoryId;
         }
         #endregion
 
