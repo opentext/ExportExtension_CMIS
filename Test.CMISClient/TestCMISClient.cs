@@ -7,7 +7,7 @@ using System.Threading;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-
+using ExportExtensionCommon;
 
 namespace CaptureCenter.CMIS
 {
@@ -19,8 +19,8 @@ namespace CaptureCenter.CMIS
         /// The CMIS client librabry is tested against various target systems. For each target system there
         /// is one CMISTestSystem instance defined that contains all relevant settings for the target.
 
-        //private string testonly = null;
-        private string testonly = "InMemory";
+        private string testonly = null;
+        //private string testonly = "InMemory";
 
         #region Constructor
         // Turn on/off performance tests
@@ -38,6 +38,7 @@ namespace CaptureCenter.CMIS
         public TestCMISClient()
         {
             testsystems = ExportExtensionCommon.SIEEUtils.GetLocalTestDefinintions(testsystems);
+            //Serializer.SerializeToXmlFile(testsystems, @"c:\temp\TestSystems.xml", Encoding.Unicode);
             sampleDocument = Path.Combine(Path.GetTempPath(), "Document.pdf");
             File.WriteAllBytes(sampleDocument, SIEE_CMIS_Test.Properties.Resources.Document);
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -99,7 +100,7 @@ namespace CaptureCenter.CMIS
 
         private List<CMISTestSystem> testsystems = new List<CMISTestSystem>()
         {
-            new CMISTestSystem()
+            /*Alfresco*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "Alfresco",
@@ -161,7 +162,7 @@ namespace CaptureCenter.CMIS
                 SupportsMinorVersions = true,
             },
 
-            new CMISTestSystem()
+            /*InMemory*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "InMemory",
@@ -225,7 +226,7 @@ namespace CaptureCenter.CMIS
                 VersionableTest = true,
             },
 
-            new CMISTestSystem()
+            /*ArchiveCenter*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "ArchiveCenter",
@@ -286,7 +287,7 @@ namespace CaptureCenter.CMIS
                 SupportsMinorVersions = false,
             },
 
-            new CMISTestSystem()
+            /*ContentServer*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "ContentServer",
@@ -326,7 +327,7 @@ namespace CaptureCenter.CMIS
                 SupportsMinorVersions = false,
             },
 
-            new CMISTestSystem()
+            /*Domea*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "Domea",
@@ -387,7 +388,7 @@ namespace CaptureCenter.CMIS
                 SupportsMinorVersions = true,
             },
 
-            new CMISTestSystem()
+            /*Documentum*/ new CMISTestSystem()
             {
                 // Connection
                 TestSystemName = "Documentum",
