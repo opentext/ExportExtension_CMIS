@@ -89,6 +89,7 @@ namespace CaptureCenter.CMIS
                     cmisClient.UpdateDocument(folder, document.PDFFileName, dn, props, mySettings.Major, checkInComment);
             }
             catch (Exception e) { trace.WriteError(e.Message); throw; }
+            document.TargetDocumentId = folder + ":" + document.PDFFileName;
         }
 
         private object convert(CMISSettings settings, SIEEField field)

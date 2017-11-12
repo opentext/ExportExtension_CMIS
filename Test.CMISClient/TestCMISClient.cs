@@ -19,8 +19,9 @@ namespace CaptureCenter.CMIS
         /// The CMIS client librabry is tested against various target systems. For each target system there
         /// is one CMISTestSystem instance defined that contains all relevant settings for the target.
 
-        private string testonly = null;
+        //private string testonly = null;
         //private string testonly = "InMemory";
+        private string testonly = "ContentServer";
 
         #region Constructor
         // Turn on/off performance tests
