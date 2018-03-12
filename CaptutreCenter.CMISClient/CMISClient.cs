@@ -7,7 +7,7 @@ using System.Globalization;
 using PortCMIS;
 using PortCMIS.Binding;
 using PortCMIS.Client;
-using PortCMIS.Const;
+//using PortCMIS.Const;
 using PortCMIS.Data;
 using PortCMIS.Enums;
 using PortCMIS.Exceptions;

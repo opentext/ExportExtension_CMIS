@@ -46,6 +46,9 @@
     <Reference Include="ExportExtensionCommon.Base">
       <HintPath>..\..\eebin\ExportExtensionCommon.Base.dll</HintPath>
     </Reference>
+    <Reference Include="PortCMIS, Version=0.3.0.0, Culture=neutral, PublicKeyToken=2b5bee6b68620282, processorArchitecture=MSIL">
+      <HintPath>..\packages\PortCMIS.0.3.0\lib\netstandard1.1\PortCMIS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -77,15 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Document.pdf" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CaptutreCenter.CMISClient\CMISClient.csproj">
       <Project>{fa830be0-7dbb-408f-8a67-0df622212069}</Project>
       <Name>CMISClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PortCMIS\PortCMIS.csproj">
-      <Project>{a3ab61be-057d-4dd4-824c-ac174322c5d2}</Project>
-      <Name>PortCMIS</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

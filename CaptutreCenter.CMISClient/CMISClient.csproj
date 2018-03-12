@@ -37,6 +37,9 @@
     <Reference Include="ExportExtensionCommon.Base">
       <HintPath>..\..\eebin\ExportExtensionCommon.Base.dll</HintPath>
     </Reference>
+    <Reference Include="PortCMIS, Version=0.3.0.0, Culture=neutral, PublicKeyToken=2b5bee6b68620282, processorArchitecture=MSIL">
+      <HintPath>..\packages\PortCMIS.0.3.0\lib\netstandard1.1\PortCMIS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,10 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PortCMIS\PortCMIS.csproj">
-      <Project>{a3ab61be-057d-4dd4-824c-ac174322c5d2}</Project>
-      <Name>PortCMIS</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
