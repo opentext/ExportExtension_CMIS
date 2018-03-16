@@ -20,8 +20,8 @@ namespace CaptureCenter.CMIS
         /// is one CMISTestSystem instance defined that contains all relevant settings for the target.
 
         //private string testonly = null;
-        //private string testonly = "InMemory";
-        private string testonly = "ContentServer";
+        private string testonly = "InMemory";
+        // private string testonly = "ContentServer";
 
         #region Constructor
         // Turn on/off performance tests
@@ -450,7 +450,7 @@ namespace CaptureCenter.CMIS
             if (!string.IsNullOrEmpty(testonly))
                 return testsystems.Where(n => n.TestSystemName == testonly).ToList();
 
-            List<CMISTestSystem> result =testsystems.Where(n => n.IsActive).ToList();
+            List<CMISTestSystem> result = testsystems.Where(n => n.IsActive).ToList();
             return result;
         }
         #endregion
