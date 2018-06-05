@@ -373,7 +373,7 @@ namespace CaptureCenter.CMIS
             List<CMISProperty> result = new List<CMISProperty>();
             foreach (IPropertyDefinition p in type.Type.PropertyDefinitions)
             {
-                if (p.Updatability == Updatability.ReadWrite && typeMap.Keys.Contains(p.PropertyType))
+                if ((p.Updatability == Updatability.ReadWrite || p.Updatability == Updatability.OnCreate) && typeMap.Keys.Contains(p.PropertyType))
                     result.Add(new CMISProperty()
                     {
                         Id = p.Id,
