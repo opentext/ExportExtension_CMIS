@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatureCenter.CMIS.Adapter", "CaptureCenter.CMIS.Adapter\CatureCenter.CMIS.Adapter.csproj", "{F60404EB-5FA0-41A2-934F-8DE316FCC2E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptureCenter.CMIS.Adapter", "CaptureCenter.CMIS.Adapter\CaptureCenter.CMIS.Adapter.csproj", "{F60404EB-5FA0-41A2-934F-8DE316FCC2E3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FA830BE0-7DBB-408F-8A67-0DF622212069} = {FA830BE0-7DBB-408F-8A67-0DF622212069}
 	EndProjectSection
@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCMISAdapter", "TestCMIS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortCMIS_TestAndExplore", "PortCMIS_TestAndExplore\PortCMIS_TestAndExplore.csproj", "{4140EBEC-EC9C-4D83-A9A0-A464A40C9BFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMISClient", "CaptutreCenter.CMISClient\CMISClient.csproj", "{FA830BE0-7DBB-408F-8A67-0DF622212069}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMISClient", "CaptureCenter.CMISClient\CMISClient.csproj", "{FA830BE0-7DBB-408F-8A67-0DF622212069}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3AB61BE-057D-4DD4-824C-AC174322C5D2} = {A3AB61BE-057D-4DD4-824C-AC174322C5D2}
 	EndProjectSection

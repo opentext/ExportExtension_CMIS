@@ -91,11 +91,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaptureCenter.CMIS.Adapter\CatureCenter.CMIS.Adapter.csproj">
+    <ProjectReference Include="..\CaptureCenter.CMIS.Adapter\CaptureCenter.CMIS.Adapter.csproj">
       <Project>{f60404eb-5fa0-41a2-934f-8de316fcc2e3}</Project>
-      <Name>CatureCenter.CMIS.Adapter</Name>
+      <Name>CaptureCenter.CMIS.Adapter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CaptutreCenter.CMISClient\CMISClient.csproj">
+    <ProjectReference Include="..\CaptureCenter.CMISClient\CMISClient.csproj">
       <Project>{fa830be0-7dbb-408f-8a67-0df622212069}</Project>
       <Name>CMISClient</Name>
     </ProjectReference>

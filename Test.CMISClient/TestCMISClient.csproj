@@ -83,7 +83,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CaptutreCenter.CMISClient\CMISClient.csproj">
+    <ProjectReference Include="..\CaptureCenter.CMISClient\CMISClient.csproj">
       <Project>{fa830be0-7dbb-408f-8a67-0df622212069}</Project>
       <Name>CMISClient</Name>
     </ProjectReference>
